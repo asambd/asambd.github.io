@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notice Board | Arpara Sadar Alim Madrasah</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Notice Board</h1>
+    <nav>
+      <a href="index.html">Home</a>
+    </nav>
+  </header>  <section id="noticeList">
+    <h2>📢 সর্বশেষ নোটিস সমূহ</h2>
+    <div id="notices"></div>
+  </section>  <footer>
+    <p>&copy; 2025 Arpara Sadar Alim Madrasah</p>
+  </footer><script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBtYaWrPMxYA3Fu1SC7jnGWQOo3PAMM7NU",
+    authDomain: "asam-9bea0.firebaseapp.com",
+    projectId: "asam-9bea0",
+    storageBucket: "asam-9bea0.firebasestorage.app",
+    messagingSenderId: "625200908251",
+    appId: "1:625200908251:web:b953cf32f6c957bdec49fe"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function loadNotices() {
+    const noticeRef = collection(db, "notices");
+    const snap = await getDocs(noticeRef);
+    let html = "";
+
+    snap.forEach(doc => {
+      const data = doc.data();
+      html += `
+        <div class='notice-card'>
+          <h3>📌 ${data.title}</h3>
+          <p>${data.description}</p>
+          <small>📅 ${data.date}</small>
+        </div>
+      `;
+    });
+
+    document.getElementById("notices").innerHTML = html || "<p>No notices available</p>";
+  }
+
+  loadNotices();
+</script></body>
+</html>
