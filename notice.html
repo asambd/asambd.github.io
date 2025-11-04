@@ -1,6 +1,65 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Notice | Arpara Sadar Alim Madrasah</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef6ff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #007bff;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+    }
+    form {
+      width: 90%;
+      max-width: 450px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #005fc9;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h2>Add New Notice</h2>
+</header>
+
+<form id="noticeForm">
+  <input type="text" id="title" placeholder="Notice Title" required>
+  <textarea id="description" rows="5" placeholder="Notice Description" required></textarea>
+  <button type="submit">Publish Notice</button>
+</form>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBtYaWrPMxYA3Fu1SC7jnGWQOo3PAMM7NU",
@@ -14,25 +73,29 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  async function loadNotices() {
-    const noticeRef = collection(db, "notices");
-    const q = query(noticeRef, orderBy("date", "desc")); // ✅ newest first
-    const snap = await getDocs(q);
+  document.getElementById("noticeForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    let html = "";
-    snap.forEach(doc => {
-      const data = doc.data();
-      html += `
-        <div class='notice-card'>
-          <h3>📌 ${data.title}</h3>
-          <p>${data.description}</p>
-          <small>📅 ${data.date}</small>
-        </div>
-      `;
-    });
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
 
-    document.getElementById("notices").innerHTML = html || "<p>No notices available</p>";
-  }
+    if (!title || !description) return alert("Fill all fields!");
 
-  loadNotices();
+    try {
+      await addDoc(collection(db, "notices"), {
+        title,
+        description,
+        date: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+        timestamp: serverTimestamp() // ✅ Firestore sort field
+      });
+
+      alert("✅ Notice Published!");
+      e.target.reset();
+    } catch (error) {
+      alert("❌ Error: " + error.message);
+    }
+  });
 </script>
+
+</body>
+</html>
