@@ -1,22 +1,125 @@
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notice Board | Arpara Sadar Alim Madrasah</title>
-  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    :root {
+      --bg: #eef6ff;
+      --card-bg: #fff;
+      --text: #000;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b172a;
+      --card-bg: #162447;
+      --text: #e8e8e8;
+      --card-shadow: rgba(255,255,255,0.08);
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      transition: 0.3s;
+    }
+
+    header {
+      background: #007bff;
+      padding: 15px;
+      text-align: center;
+      color: white;
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      margin-right: 12px;
+    }
+
+    .theme-toggle {
+      background: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    section {
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .notice-card {
+      background: var(--card-bg);
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px var(--card-shadow);
+      transition: 0.3s;
+      border-left: 5px solid #007bff;
+    }
+
+    .notice-card:hover {
+      transform: scale(1.02);
+    }
+
+    .notice-card h3 {
+      margin: 0 0 5px 0;
+      font-size: 18px;
+      color: #007bff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      margin-top: 20px;
+    }
+  </style>
 </head>
-<body>
-  <header>
-    <h1>Notice Board</h1>
-    <nav>
-      <a href="index.html">Home</a>
-    </nav>
-  </header>  <section id="noticeList">
-    <h2>📢 সর্বশেষ নোটিস সমূহ</h2>
-    <div id="notices"></div>
-  </section>  <footer>
-    <p>&copy; 2025 Arpara Sadar Alim Madrasah</p>
-  </footer><script type="module">
+<body data-theme="light">
+
+<header>
+  <h1>Notice Board</h1>
+  <div>
+    <a href="index.html">Home</a>
+    <button class="theme-toggle" id="themeBtn">Dark</button>
+  </div>
+</header>
+
+<section id="noticeList">
+  <h2>📢 সর্বশেষ নোটিস সমূহ</h2>
+  <div id="notices"></div>
+</section>
+
+<footer>
+  <p>&copy; 2025 Arpara Sadar Alim Madrasah</p>
+</footer>
+
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -52,5 +155,23 @@
   }
 
   loadNotices();
-</script></body>
+</script>
+
+<script>
+  const themeBtn = document.getElementById("themeBtn");
+  themeBtn.addEventListener("click", () => {
+    const body = document.body;
+    const currentTheme = body.getAttribute("data-theme");
+
+    if (currentTheme === "light") {
+      body.setAttribute("data-theme", "dark");
+      themeBtn.textContent = "Light";
+    } else {
+      body.setAttribute("data-theme", "light");
+      themeBtn.textContent = "Dark";
+    }
+  });
+</script>
+
+</body>
 </html>
